@@ -209,6 +209,67 @@ E:\Users\ㅁㅁㅁ\Documents\Unity-Multiplayer&gt;atom .
 a user connected
 user disconnect
 </code></pre>
+
+<h3>
+<a id="위치-동기화" class="anchor" href="#%EC%9C%84%EC%B9%98-%EB%8F%99%EA%B8%B0%ED%99%94" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>위치 동기화</h3>
+
+<h4>
+<a id="appjs-수정-step-by-step-설명-필요하지만-일단-넘어가기" class="anchor" href="#appjs-%EC%88%98%EC%A0%95-step-by-step-%EC%84%A4%EB%AA%85-%ED%95%84%EC%9A%94%ED%95%98%EC%A7%80%EB%A7%8C-%EC%9D%BC%EB%8B%A8-%EB%84%98%EC%96%B4%EA%B0%80%EA%B8%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>App.js 수정 (step by step 설명 필요하지만 일단 넘어가기)</h4>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">/*</span>
+<span class="pl-c">  Server version 2</span>
+<span class="pl-c">  It supports syncing players.</span>
+<span class="pl-c">*/</span>
+<span class="pl-k">var</span> io <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>socket.io<span class="pl-pds">'</span></span>)(<span class="pl-c1">80</span>)
+
+<span class="pl-k">var</span> players <span class="pl-k">=</span> {}
+
+<span class="pl-smi">io</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>connection<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">socket</span>){
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>a user connected<span class="pl-pds">'</span></span>)
+
+  <span class="pl-smi">socket</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>disconnect<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>user disconnect<span class="pl-pds">'</span></span>)
+    <span class="pl-k">if</span> (<span class="pl-smi">socket</span>.<span class="pl-c1">id</span> <span class="pl-k">in</span> players) <span class="pl-k">delete</span> players[<span class="pl-smi">socket</span>.<span class="pl-c1">id</span>]
+  })
+
+  <span class="pl-smi">socket</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>sync<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">player</span>) {
+    <span class="pl-c">/*</span>
+<span class="pl-c">      player:</span>
+<span class="pl-c">        id: String, but empty</span>
+<span class="pl-c">        position: [float, float, float]</span>
+<span class="pl-c">        rotation: [float, float, float]</span>
+<span class="pl-c">    */</span>
+    <span class="pl-smi">player</span>.<span class="pl-c1">id</span> <span class="pl-k">=</span> <span class="pl-smi">socket</span>.<span class="pl-c1">id</span>
+
+    <span class="pl-c">// update server's player list</span>
+    players[<span class="pl-smi">player</span>.<span class="pl-c1">id</span>] <span class="pl-k">=</span> player
+
+    <span class="pl-c">// broadcast to other clients</span>
+    <span class="pl-smi">socket</span>.<span class="pl-en">broadcast</span>(<span class="pl-s"><span class="pl-pds">'</span>sync<span class="pl-pds">'</span></span>, player)
+
+    <span class="pl-c">// Print current players for debugging</span>
+    <span class="pl-en">printPlayers</span>()
+  })
+})
+
+<span class="pl-k">function</span> <span class="pl-en">printPlayers</span>() {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(players)
+}
+</pre></div>
+
+<h4>
+<a id="client-코드-작성" class="anchor" href="#client-%EC%BD%94%EB%93%9C-%EC%9E%91%EC%84%B1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client 코드 작성</h4>
+
+<h5>
+<a id="1-플레이어-게임-오브젝트에-playersyncercs-스크립트-생성" class="anchor" href="#1-%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4-%EA%B2%8C%EC%9E%84-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8%EC%97%90-playersyncercs-%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%83%9D%EC%84%B1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. 플레이어 게임 오브젝트에 PlayerSyncer.cs 스크립트 생성</h5>
+
+<p>[]()</p>
+
+<h5>
+<a id="1-플레이어-게임-오브젝트에-playersyncercs-스크립트-생성-1" class="anchor" href="#1-%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4-%EA%B2%8C%EC%9E%84-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8%EC%97%90-playersyncercs-%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%83%9D%EC%84%B1-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. 플레이어 게임 오브젝트에 PlayerSyncer.cs 스크립트 생성</h5>
+
+<h3>
+<a id="새로-들어온-유저를-위한-처리" class="anchor" href="#%EC%83%88%EB%A1%9C-%EB%93%A4%EC%96%B4%EC%98%A8-%EC%9C%A0%EC%A0%80%EB%A5%BC-%EC%9C%84%ED%95%9C-%EC%B2%98%EB%A6%AC" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>새로 들어온 유저를 위한 처리</h3>
       </section>
 
     </div>
