@@ -261,15 +261,129 @@ user disconnect
 <a id="client-코드-작성" class="anchor" href="#client-%EC%BD%94%EB%93%9C-%EC%9E%91%EC%84%B1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client 코드 작성</h4>
 
 <h5>
-<a id="1-플레이어-게임-오브젝트에-playersyncercs-스크립트-생성" class="anchor" href="#1-%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4-%EA%B2%8C%EC%9E%84-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8%EC%97%90-playersyncercs-%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%83%9D%EC%84%B1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. 플레이어 게임 오브젝트에 PlayerSyncer.cs 스크립트 생성</h5>
+<a id="1-플레이어-게임-오브젝트에-playersyncercs-스크립트-생성하고-다음을-복붙" class="anchor" href="#1-%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4-%EA%B2%8C%EC%9E%84-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8%EC%97%90-playersyncercs-%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%83%9D%EC%84%B1%ED%95%98%EA%B3%A0-%EB%8B%A4%EC%9D%8C%EC%9D%84-%EB%B3%B5%EB%B6%99" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. 플레이어 게임 오브젝트에 PlayerSyncer.cs 스크립트 생성하고 다음을 복붙.</h5>
+
+<p><img src="https://raw.githubusercontent.com/co2meal/unity-multiplayer/master/4.2.3%20-%20%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4%20%EA%B2%8C%EC%9E%84%20%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8%EC%97%90%20PlayerSyncer%20%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%20%EC%83%9D%EC%84%B1.PNG" alt=""></p>
+
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">using</span> UnityEngine<span class="pl-k">;</span>
+<span class="pl-k">using</span> SocketIO<span class="pl-k">;</span>
+<span class="pl-k">using</span> System<span class="pl-k">;</span>
+<span class="pl-k">using</span> System.Collections<span class="pl-k">;</span>
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">PlayerSyncer</span> : <span class="pl-k">MonoBehaviour</span> {
+
+    <span class="pl-k">public</span> <span class="pl-k">static</span> SocketIOComponent socket = <span class="pl-c1">null</span>;
+    <span class="pl-c">// Use this for initialization</span>
+    <span class="pl-k">void</span> <span class="pl-en">Start</span> () {
+        GameObject go = GameObject.Find(<span class="pl-s"><span class="pl-pds">"</span>SocketIO<span class="pl-pds">"</span></span>);
+        socket = go.GetComponent&lt;SocketIOComponent&gt;();
+    }
+
+    <span class="pl-c">// Update is called once per frame</span>
+    <span class="pl-k">void</span> <span class="pl-en">Update</span> () {
+        PlayerData player_data = <span class="pl-k">new</span> PlayerData(transform);
+        socket.Emit(<span class="pl-s"><span class="pl-pds">"</span>sync<span class="pl-pds">"</span></span>, player_data.ToJSONObject());
+    }
+}
+
+[Serializable]
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">PlayerData</span> {
+    <span class="pl-k">public</span> <span class="pl-k">string</span> id = <span class="pl-s"><span class="pl-pds">"</span>undefined<span class="pl-pds">"</span></span>;
+    <span class="pl-k">public</span> Vector3 position;
+    <span class="pl-k">public</span> Quaternion rotation;
+
+    <span class="pl-k">public</span> <span class="pl-en">PlayerData</span>(<span class="pl-k">Transform</span> <span class="pl-smi">transform</span>) {
+        position = transform.position;
+        rotation = transform.rotation;
+    }
+
+    <span class="pl-k">public</span> JSONObject <span class="pl-en">ToJSONObject</span>() {
+        <span class="pl-k">return</span> <span class="pl-k">new</span> JSONObject(JsonUtility.ToJson(<span class="pl-c1">this</span>));
+    }
+}</pre></div>
+
+<h5>
+<a id="2-다른플레이어들-게임오브젝트-생성-및-프리팹-준비" class="anchor" href="#2-%EB%8B%A4%EB%A5%B8%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4%EB%93%A4-%EA%B2%8C%EC%9E%84%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%EC%83%9D%EC%84%B1-%EB%B0%8F-%ED%94%84%EB%A6%AC%ED%8C%B9-%EC%A4%80%EB%B9%84" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. 다른플레이어들 게임오브젝트 생성 및 프리팹 준비</h5>
+
+<ol>
+<li>Projects -&gt; Create -&gt; Create Empty</li>
+<li>"다른플레이어들" 으로 이름 변경</li>
+<li>"플레이어"에 우클릭 -&gt; Duplicate</li>
+<li>"다른플레이어들"로 이동, "다른플레이어 프리팹"으로 이름 변경</li>
+<li>"다른플레이어 프리팹"의 스크립트 모두 삭제</li>
+<li>Project/Assets/Materials 밑의 Albedo Material을 "다른플레이어 프리팹"에 적용
+<img src="https://raw.githubusercontent.com/co2meal/unity-multiplayer/master/4.2.2%20-%20%EB%8B%A4%EB%A5%B8%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4%20%ED%94%84%EB%A6%AC%ED%8C%B9%20%EC%A4%80%EB%B9%84%201.PNG" alt="">
+</li>
+<li>Project에서 Assets/Prefabs 폴더 생성 후 "다른플레이어 프리팹" 드래그앤 드롭</li>
+<li>다른플레이어들 아래 다른플레이어 프리팹 삭제
+<img src="https://raw.githubusercontent.com/co2meal/unity-multiplayer/master/4.2.2%20-%20%EB%8B%A4%EB%A5%B8%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4%20%ED%94%84%EB%A6%AC%ED%8C%B9%20%EC%A4%80%EB%B9%84%202.PNG" alt="">
+</li>
+</ol>
+
+<h5>
+<a id="3-다른플레이어들에-otherplayerssyncercs-스크립트-생성하고-복붙-프리팹-적용" class="anchor" href="#3-%EB%8B%A4%EB%A5%B8%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4%EB%93%A4%EC%97%90-otherplayerssyncercs-%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%83%9D%EC%84%B1%ED%95%98%EA%B3%A0-%EB%B3%B5%EB%B6%99-%ED%94%84%EB%A6%AC%ED%8C%B9-%EC%A0%81%EC%9A%A9" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. "다른플레이어들"에 OtherPlayersSyncer.cs 스크립트 생성하고 복붙, 프리팹 적용</h5>
+
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">using</span> UnityEngine<span class="pl-k">;</span>
+<span class="pl-k">using</span> SocketIO<span class="pl-k">;</span>
+<span class="pl-k">using</span> System.Collections<span class="pl-k">;</span>
+<span class="pl-k">using</span> System.Collections.Generic<span class="pl-k">;</span>
+
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">OtherPlayersSyncer</span> : <span class="pl-k">MonoBehaviour</span> {
+    <span class="pl-k">public</span> GameObject otherPlayerPrefab;
+    <span class="pl-k">private</span> <span class="pl-k">static</span> SocketIOComponent socket = <span class="pl-c1">null</span>;
+    <span class="pl-k">private</span> Dictionary&lt;<span class="pl-k">string</span>, GameObject&gt; otherPlayersDict = <span class="pl-k">new</span> Dictionary&lt;<span class="pl-k">string</span>, GameObject&gt;();
+    <span class="pl-c">// Use this for initialization</span>
+    <span class="pl-k">void</span> <span class="pl-en">Start</span> () {
+        GameObject go = GameObject.Find(<span class="pl-s"><span class="pl-pds">"</span>SocketIO<span class="pl-pds">"</span></span>);
+        socket = go.GetComponent&lt;SocketIOComponent&gt;();
+
+        socket.On(<span class="pl-s"><span class="pl-pds">"</span>sync<span class="pl-pds">"</span></span>, OnSync);
+        socket.On(<span class="pl-s"><span class="pl-pds">"</span>remove<span class="pl-pds">"</span></span>, OnRemove);
+    }
+
+    GameObject <span class="pl-en">FindOrCreatePlayer</span>(<span class="pl-k">PlayerData</span> <span class="pl-smi">player_data</span>) {
+        <span class="pl-k">if</span> (!otherPlayersDict.ContainsKey(player_data.id)) {
+            GameObject newPlayer = Instantiate(
+                    otherPlayerPrefab,
+                    player_data.position,
+                    player_data.rotation) <span class="pl-k">as</span> GameObject;
+            newPlayer.transform.parent = GameObject.Find(<span class="pl-s"><span class="pl-pds">"</span>다른플레이어들<span class="pl-pds">"</span></span>).transform;
+
+            otherPlayersDict.Add(player_data.id, newPlayer);
+        }
+
+        <span class="pl-k">return</span> otherPlayersDict[player_data.id];
+    }
+
+    <span class="pl-k">void</span> <span class="pl-en">OnSync</span>(<span class="pl-k">SocketIOEvent</span> <span class="pl-smi">e</span>) {
+        PlayerData player_data = <span class="pl-k">new</span> PlayerData(e.data);
+
+        <span class="pl-c">// Create other player object if it does not exist.</span>
+        GameObject player = FindOrCreatePlayer(player_data);
+        player.transform.position = player_data.position;
+        player.transform.rotation = player_data.rotation;
+    }
+
+    <span class="pl-k">void</span> <span class="pl-en">OnRemove</span>(<span class="pl-k">SocketIOEvent</span> <span class="pl-smi">e</span>) {
+        PlayerData player_data = <span class="pl-k">new</span> PlayerData(e.data);
+        <span class="pl-k">if</span> (otherPlayersDict.ContainsKey(player_data.id)) {
+            Destroy(otherPlayersDict[player_data.id]);
+            otherPlayersDict.Remove(player_data.id);
+        }
+    }
+}</pre></div>
 
 <p>[]()</p>
 
 <h5>
-<a id="1-플레이어-게임-오브젝트에-playersyncercs-스크립트-생성-1" class="anchor" href="#1-%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4-%EA%B2%8C%EC%9E%84-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8%EC%97%90-playersyncercs-%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%83%9D%EC%84%B1-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. 플레이어 게임 오브젝트에 PlayerSyncer.cs 스크립트 생성</h5>
+<a id="4-build--run" class="anchor" href="#4-build--run" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>4. Build &amp; Run</h5>
 
-<h3>
-<a id="새로-들어온-유저를-위한-처리" class="anchor" href="#%EC%83%88%EB%A1%9C-%EB%93%A4%EC%96%B4%EC%98%A8-%EC%9C%A0%EC%A0%80%EB%A5%BC-%EC%9C%84%ED%95%9C-%EC%B2%98%EB%A6%AC" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>새로 들어온 유저를 위한 처리</h3>
+<ol>
+<li>File-Bulid Setting-Player Settings...-Run In Background 체크
+[]()</li>
+<li>Fild-Build Run-파일이름 run.exe으로 저장 및 실행</li>
+</ol>
       </section>
 
     </div>
