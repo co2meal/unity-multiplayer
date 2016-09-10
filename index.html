@@ -71,8 +71,8 @@
 <h3>
 <a id="1-스타팅-포인트-다운받기" class="anchor" href="#1-%EC%8A%A4%ED%83%80%ED%8C%85-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EB%8B%A4%EC%9A%B4%EB%B0%9B%EA%B8%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. 스타팅 포인트 다운받기</h3>
 
-<p>먼저 공굴리기 유니티 프로젝트 준비하기.
-공에 콘트롤러 붙여서 맵을 돌아다니기만 하는게 끝임.
+<p>먼저 공굴리기 유니티 프로젝트 준비하기.<br>
+공에 콘트롤러 붙여서 맵을 돌아다니기만 하는게 끝임.<br>
 그냥 다운받아도 되고 직접 따라가면서 해봐도 됨.</p>
 
 <p><a href="https://github.com/co2meal/unity-multiplayer/raw/master/Unity-Multiplayer-Starting-Point.zip">그냥 다운받기 (권장)</a><br>
@@ -82,6 +82,74 @@
 <p>다운받았으면, 압축을 풀고 Unity에서 불러옴.</p>
 
 <p><img src="https://github.com/co2meal/unity-multiplayer/raw/master/%EC%8A%A4%ED%83%80%ED%8C%85%20%ED%8F%AC%EC%9D%B8%ED%8A%B8%20%EC%82%AC%EC%A7%84%201.PNG" alt=""></p>
+
+<h3>
+<a id="2-socketio-설치-및-프로그래밍" class="anchor" href="#2-socketio-%EC%84%A4%EC%B9%98-%EB%B0%8F-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Socket.io 설치 및 프로그래밍</h3>
+
+<ol>
+<li><p>Project 폴더에 새폴더를 만들고 Server라고 이름을 지음
+<img src="https://github.com/co2meal/unity-multiplayer/raw/master/1%20-%20Socket%20IO%20%EC%BD%94%EB%93%9C%EC%9A%A9%20%ED%8F%B4%EB%8D%94%20%EB%A7%8C%EB%93%A4%EA%B8%B0.PNG" alt=""></p></li>
+<li><p>Server폴더에 Shift - 우클릭으로 "여기서 명령 창 열기" 누름.
+<img src="https://github.com/co2meal/unity-multiplayer/raw/master/2%20-%20%EC%97%AC%EA%B8%B0%EC%84%9C%20%EB%AA%85%EB%A0%B9%20%EC%B0%BD%20%EC%97%B4%EA%B8%B0.PNG" alt=""></p></li>
+<li><p><code>npm install socket.io</code>로 <code>socket.io</code> 패키지 설치. 아래와 같이 결과가 나오면 성공한 것임.</p></li>
+</ol>
+
+<pre><code>E:\Users\ㅁㅁㅁ\Documents\Unity-Multiplayer\Server&gt;npm install socket.io
+E:\Users\ㅁㅁㅁ\Documents\Unity-Multiplayer\Server
+`-- socket.io@1.4.8
+  +-- debug@2.2.0
+  | `-- ms@0.7.1
+  +-- engine.io@1.6.11
+  | +-- accepts@1.1.4
+  | | +-- mime-types@2.0.14
+  | | | `-- mime-db@1.12.0
+  | | `-- negotiator@0.4.9
+  | +-- base64id@0.1.0
+  | +-- engine.io-parser@1.2.4
+  | | +-- after@0.8.1
+  | | +-- arraybuffer.slice@0.0.6
+  | | +-- base64-arraybuffer@0.1.2
+  | | +-- blob@0.0.4
+  | | +-- has-binary@0.1.6
+  | | `-- utf8@2.1.0
+  | `-- ws@1.1.0
+  |   +-- options@0.0.6
+  |   `-- ultron@1.0.2
+  +-- has-binary@0.1.7
+  | `-- isarray@0.0.1
+  +-- socket.io-adapter@0.4.0
+  | `-- socket.io-parser@2.2.2
+  |   +-- debug@0.7.4
+  |   `-- json3@3.2.6
+  +-- socket.io-client@1.4.8
+  | +-- backo2@1.0.2
+  | +-- component-bind@1.0.0
+  | +-- component-emitter@1.2.0
+  | +-- engine.io-client@1.6.11
+  | | +-- component-inherit@0.0.3
+  | | +-- has-cors@1.1.0
+  | | +-- parsejson@0.0.1
+  | | +-- parseqs@0.0.2
+  | | +-- ws@1.0.1
+  | | +-- xmlhttprequest-ssl@1.5.1
+  | | `-- yeast@0.1.2
+  | +-- indexof@0.0.1
+  | +-- object-component@0.0.3
+  | +-- parseuri@0.0.4
+  | | `-- better-assert@1.0.2
+  | |   `-- callsite@1.0.0
+  | `-- to-array@0.1.4
+  `-- socket.io-parser@2.2.6
+    +-- benchmark@1.0.0
+    +-- component-emitter@1.1.2
+    `-- json3@3.3.2
+
+npm WARN enoent ENOENT: no such file or directory, open 'E:\Users\ㅁㅁㅁ\Documents\Unity-Multiplayer\Server\package.json'
+npm WARN Server No description
+npm WARN Server No repository field.
+npm WARN Server No README data
+npm WARN Server No license field.
+</code></pre>
       </section>
 
     </div>
