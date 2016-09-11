@@ -245,7 +245,7 @@ user disconnect
     players[<span class="pl-smi">player</span>.<span class="pl-c1">id</span>] <span class="pl-k">=</span> player
 
     <span class="pl-c">// broadcast to other clients</span>
-    <span class="pl-smi">socket</span>.<span class="pl-en">broadcast</span>(<span class="pl-s"><span class="pl-pds">'</span>sync<span class="pl-pds">'</span></span>, player)
+    <span class="pl-smi">socket</span>.<span class="pl-smi">broadcast</span>.<span class="pl-en">emit</span>(<span class="pl-s"><span class="pl-pds">'</span>sync<span class="pl-pds">'</span></span>, player)
 
     <span class="pl-c">// Print current players for debugging</span>
     <span class="pl-en">printPlayers</span>()
