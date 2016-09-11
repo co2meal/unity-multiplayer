@@ -297,6 +297,13 @@ user disconnect
         rotation = transform.rotation;
     }
 
+    <span class="pl-k">public</span> <span class="pl-en">PlayerData</span>(<span class="pl-k">JSONObject</span> <span class="pl-smi">json_data</span>) {
+        PlayerData data = JsonUtility.FromJson&lt;PlayerData&gt;(json_data.ToString());
+        id = data.id;
+        position = data.position;
+        rotation = data.rotation;
+    }
+
     <span class="pl-k">public</span> JSONObject <span class="pl-en">ToJSONObject</span>() {
         <span class="pl-k">return</span> <span class="pl-k">new</span> JSONObject(JsonUtility.ToJson(<span class="pl-c1">this</span>));
     }
